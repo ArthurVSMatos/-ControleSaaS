@@ -1,0 +1,11 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: clinica_saas_db
+    restart: always
+    environment:
+      POSTGRES_DB: clinica_saas_db
+      POSTGRES_USER: clinica_admin
+      POSTGRES_PASSWORD: SenhaPostgresSegura123!
+    ports:
+      - "5433:5432"

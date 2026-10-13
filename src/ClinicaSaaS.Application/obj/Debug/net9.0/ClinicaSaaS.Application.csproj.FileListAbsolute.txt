@@ -1,0 +1,15 @@
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/bin/Debug/net9.0/ClinicaSaaS.Application.deps.json
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/bin/Debug/net9.0/ClinicaSaaS.Application.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/bin/Debug/net9.0/ClinicaSaaS.Application.pdb
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/bin/Debug/net9.0/ClinicaSaaS.Domain.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/bin/Debug/net9.0/ClinicaSaaS.Domain.pdb
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.csproj.AssemblyReference.cache
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.GeneratedMSBuildEditorConfig.editorconfig
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.AssemblyInfoInputs.cache
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.AssemblyInfo.cs
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.csproj.CoreCompileInputs.cache
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaS.842C2320.Up2Date
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/refint/ClinicaSaaS.Application.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.pdb
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ref/ClinicaSaaS.Application.dll

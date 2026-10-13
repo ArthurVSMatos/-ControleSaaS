@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v9.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v9.0": {
+      "ClinicaSaaS.Application/1.0.0": {
+        "dependencies": {
+          "ClinicaSaaS.Domain": "1.0.0"
+        },
+        "runtime": {
+          "ClinicaSaaS.Application.dll": {}
+        }
+      },
+      "ClinicaSaaS.Domain/1.0.0": {
+        "runtime": {
+          "ClinicaSaaS.Domain.dll": {
+            "assemblyVersion": "1.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "ClinicaSaaS.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "ClinicaSaaS.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
