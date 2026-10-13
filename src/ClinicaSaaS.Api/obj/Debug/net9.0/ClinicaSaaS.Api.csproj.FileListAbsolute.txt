@@ -123,3 +123,6 @@
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Api/bin/Debug/net9.0/Swashbuckle.AspNetCore.Swagger.dll
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Api/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerGen.dll
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Api/bin/Debug/net9.0/Swashbuckle.AspNetCore.SwaggerUI.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Api/bin/Debug/net9.0/FluentValidation.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Api/bin/Debug/net9.0/FluentValidation.DependencyInjectionExtensions.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Api/obj/Debug/net9.0/ClinicaSaaS.Api.sourcelink.json

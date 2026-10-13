@@ -17,3 +17,4 @@
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Infrastructure/obj/Debug/net9.0/ClinicaSaaS.Infrastructure.pdb
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Infrastructure/obj/Debug/net9.0/ClinicaSaaS.Infrastructure.genruntimeconfig.cache
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Infrastructure/obj/Debug/net9.0/ref/ClinicaSaaS.Infrastructure.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Infrastructure/obj/Debug/net9.0/ClinicaSaaS.Infrastructure.sourcelink.json

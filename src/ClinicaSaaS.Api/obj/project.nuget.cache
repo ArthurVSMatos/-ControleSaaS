@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "kdy8ThynZLs=",
+  "dgSpecHash": "hV/TTVQ5UQ4=",
   "success": true,
   "projectFilePath": "/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Api/ClinicaSaaS.Api.csproj",
   "expectedPackageFiles": [
     "/home/arthurvinicius/.nuget/packages/bcrypt.net-next/4.2.0/bcrypt.net-next.4.2.0.nupkg.sha512",
     "/home/arthurvinicius/.nuget/packages/efcore.namingconventions/8.0.3/efcore.namingconventions.8.0.3.nupkg.sha512",
+    "/home/arthurvinicius/.nuget/packages/fluentvalidation/12.2.0/fluentvalidation.12.2.0.nupkg.sha512",
+    "/home/arthurvinicius/.nuget/packages/fluentvalidation.dependencyinjectionextensions/12.2.0/fluentvalidation.dependencyinjectionextensions.12.2.0.nupkg.sha512",
     "/home/arthurvinicius/.nuget/packages/humanizer.core/2.14.1/humanizer.core.2.14.1.nupkg.sha512",
     "/home/arthurvinicius/.nuget/packages/microsoft.aspnetcore.authentication.jwtbearer/8.0.0/microsoft.aspnetcore.authentication.jwtbearer.8.0.0.nupkg.sha512",
     "/home/arthurvinicius/.nuget/packages/microsoft.aspnetcore.openapi/9.0.20/microsoft.aspnetcore.openapi.9.0.20.nupkg.sha512",

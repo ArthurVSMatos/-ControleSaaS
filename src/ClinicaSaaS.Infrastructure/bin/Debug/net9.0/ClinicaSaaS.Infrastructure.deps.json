@@ -42,6 +42,26 @@
           }
         }
       },
+      "FluentValidation/12.2.0": {
+        "runtime": {
+          "lib/net8.0/FluentValidation.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.2.0.0"
+          }
+        }
+      },
+      "FluentValidation.DependencyInjectionExtensions/12.2.0": {
+        "dependencies": {
+          "FluentValidation": "12.2.0",
+          "Microsoft.Extensions.DependencyInjection.Abstractions": "8.0.0"
+        },
+        "runtime": {
+          "lib/net8.0/FluentValidation.DependencyInjectionExtensions.dll": {
+            "assemblyVersion": "12.0.0.0",
+            "fileVersion": "12.2.0.0"
+          }
+        }
+      },
       "Humanizer.Core/2.14.1": {
         "runtime": {
           "lib/net6.0/Humanizer.dll": {
@@ -660,7 +680,8 @@
       "System.Threading.Channels/6.0.0": {},
       "ClinicaSaaS.Application/1.0.0": {
         "dependencies": {
-          "ClinicaSaaS.Domain": "1.0.0"
+          "ClinicaSaaS.Domain": "1.0.0",
+          "FluentValidation.DependencyInjectionExtensions": "12.2.0"
         },
         "runtime": {
           "ClinicaSaaS.Application.dll": {
@@ -698,6 +719,20 @@
       "sha512": "sha512-TdDarM6kyIS2oVIhrs3W+r+xL/76ooFJxIXxfhzsNJQu0pB9VdFZwuyKvKJnhoc7OHYFNTBP08AN37kr4CPc+Q==",
       "path": "efcore.namingconventions/8.0.3",
       "hashPath": "efcore.namingconventions.8.0.3.nupkg.sha512"
+    },
+    "FluentValidation/12.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-DR3lFbdnKucaaj1/8zMNOACMz/64igzox1yVZSFVsLxYB5mxAB+wFP1WZ8fjwrZnbU1KA1DoMzHKYKxUfuZ4wQ==",
+      "path": "fluentvalidation/12.2.0",
+      "hashPath": "fluentvalidation.12.2.0.nupkg.sha512"
+    },
+    "FluentValidation.DependencyInjectionExtensions/12.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-QpKXgiO9E6wXCh19X2Musn8MZM0xt7KQt/QrD6GDBn3MCUfy8a+rkhCzrYJNCfoxTsTRQ7bpKP8T3geTnJNNeQ==",
+      "path": "fluentvalidation.dependencyinjectionextensions/12.2.0",
+      "hashPath": "fluentvalidation.dependencyinjectionextensions.12.2.0.nupkg.sha512"
     },
     "Humanizer.Core/2.14.1": {
       "type": "package",

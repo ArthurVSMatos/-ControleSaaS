@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using FluentValidation;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -47,6 +48,7 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddValidatorsFromAssemblyContaining<ClinicaSaaS.Application.DTOs.CreateClienteValidator>();
 
 // 4. Documentação Swagger com suporte a JWT
 builder.Services.AddSwaggerGen(c =>
@@ -86,10 +88,13 @@ app.UseAuthorization();
 app.MapControllers();
 
 
+
+
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
     await DbSeeder.SeedAsync(dbContext);
 }
+
 
 app.Run();

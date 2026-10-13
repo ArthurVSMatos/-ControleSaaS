@@ -9,3 +9,4 @@
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Domain/obj/Debug/net9.0/refint/ClinicaSaaS.Domain.dll
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Domain/obj/Debug/net9.0/ClinicaSaaS.Domain.pdb
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Domain/obj/Debug/net9.0/ref/ClinicaSaaS.Domain.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Domain/obj/Debug/net9.0/ClinicaSaaS.Domain.sourcelink.json

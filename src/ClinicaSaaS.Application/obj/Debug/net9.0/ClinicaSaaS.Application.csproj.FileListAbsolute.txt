@@ -13,3 +13,4 @@
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/refint/ClinicaSaaS.Application.dll
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.pdb
 /home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ref/ClinicaSaaS.Application.dll
+/home/arthurvinicius/ClinicaSaaS/src/ClinicaSaaS.Application/obj/Debug/net9.0/ClinicaSaaS.Application.sourcelink.json
