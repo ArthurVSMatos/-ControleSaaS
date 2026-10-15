@@ -41,6 +41,8 @@ const closeEditarModalBtn = document.getElementById('closeEditarModalBtn');
 const cancelEditarModalBtn = document.getElementById('cancelEditarModalBtn');
 const editarForm = document.getElementById('editarForm');
 const editAgendamentoId = document.getElementById('editAgendamentoId');
+const editClienteId = document.getElementById('editClienteId');
+const editServicoId = document.getElementById('editServicoId');
 const editDataHoraInput = document.getElementById('editDataHoraInput');
 const editProfissionalSelect = document.getElementById('editProfissionalSelect');
 const editModalError = document.getElementById('editModalError');
@@ -83,7 +85,19 @@ async function renderizarCalendario() {
 
     const primeiroDiaSemana = new Date(ano, mes, 1).getDay();
     const totalDiasMes = new Date(ano, mes + 1, 0).getDate();
+
+    // Data de hoje zerada para comparação exata de dia
     const hoje = new Date();
+    hoje.setHours(0, 0, 0, 0);
+
+    // Garante que a data selecionada não seja um dia passado
+    const dataSelecionadaZerada = new Date(dataSelecionada);
+    dataSelecionadaZerada.setHours(0, 0, 0, 0);
+
+    if (dataSelecionadaZerada < hoje) {
+        dataSelecionada = new Date();
+        carregarAgendamentosDoDia(dataSelecionada);
+    }
 
     for (let i = 0; i < primeiroDiaSemana; i++) {
         gridCalendario.innerHTML += `<div class="h-9"></div>`;
@@ -91,8 +105,11 @@ async function renderizarCalendario() {
 
     for (let dia = 1; dia <= totalDiasMes; dia++) {
         const dataDia = new Date(ano, mes, dia);
+        dataDia.setHours(0, 0, 0, 0);
+
         const dataIsoStr = `${ano}-${String(mes + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
 
+        const isPassado = dataDia < hoje;
         const isHoje = hoje.toDateString() === dataDia.toDateString();
         const isSelecionado = dataSelecionada.toDateString() === dataDia.toDateString();
 
@@ -103,23 +120,35 @@ async function renderizarCalendario() {
 
         const btn = document.createElement('button');
         btn.type = 'button';
-        btn.className = `h-9 w-full flex flex-col items-center justify-center rounded-xl text-xs font-semibold relative transition-all active:scale-95 ${isSelecionado
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-100 font-bold'
-                : isHoje
-                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                    : 'hover:bg-gray-100 text-gray-700'
-            }`;
 
-        btn.innerHTML = `
-            <span>${dia}</span>
-            ${temAgendamento ? `<span class="w-1.5 h-1.5 rounded-full ${isSelecionado ? 'bg-white' : 'bg-emerald-500'} mt-0.5"></span>` : ''}
-        `;
+        if (isPassado) {
+            // Estilo para dias passados (desabilitados)
+            btn.disabled = true;
+            btn.className = `h-9 w-full flex flex-col items-center justify-center rounded-xl text-xs font-normal bg-gray-100 text-gray-300 cursor-not-allowed select-none`;
+            btn.innerHTML = `
+                <span>${dia}</span>
+                ${temAgendamento ? `<span class="w-1.5 h-1.5 rounded-full bg-gray-300 mt-0.5"></span>` : ''}
+            `;
+        } else {
+            // Estilo para hoje e dias futuros (selecionáveis)
+            btn.className = `h-9 w-full flex flex-col items-center justify-center rounded-xl text-xs font-semibold relative transition-all active:scale-95 ${isSelecionado
+                    ? 'bg-emerald-600 text-white shadow-md shadow-emerald-100 font-bold'
+                    : isHoje
+                        ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                        : 'hover:bg-gray-100 text-gray-700'
+                }`;
 
-        btn.addEventListener('click', () => {
-            dataSelecionada = dataDia;
-            renderizarCalendario();
-            carregarAgendamentosDoDia(dataDia);
-        });
+            btn.innerHTML = `
+                <span>${dia}</span>
+                ${temAgendamento ? `<span class="w-1.5 h-1.5 rounded-full ${isSelecionado ? 'bg-white' : 'bg-emerald-500'} mt-0.5"></span>` : ''}
+            `;
+
+            btn.addEventListener('click', () => {
+                dataSelecionada = dataDia;
+                renderizarCalendario();
+                carregarAgendamentosDoDia(dataDia);
+            });
+        }
 
         gridCalendario.appendChild(btn);
     }
@@ -185,6 +214,11 @@ function renderizarListaDia(agendamentos) {
         const clienteNome = a.nomeCliente || a.clienteNome || 'Cliente';
         const servicoNome = a.nomeServico || a.servicoNome || 'Serviço';
         const profissionalNome = a.nomeProfissional || a.profissionalNome || 'Profissional';
+
+        const clienteId = a.clienteId || a.idCliente || '';
+        const servicoId = a.servicoId || a.idServico || '';
+        const profissionalId = a.profissionalId || a.idProfissional || '';
+
         const isConfirmado = a.status === 'Confirmado';
 
         return `
@@ -201,7 +235,7 @@ function renderizarListaDia(agendamentos) {
                 </div>
 
                 <div class="flex items-center gap-1.5 shrink-0">
-                    <button onclick="window.abrirModalEditar('${a.id}', '${dataStr}', '${a.profissionalId}')" class="h-8 px-2.5 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 text-xs font-bold rounded-lg transition-all">
+                    <button onclick="window.abrirModalEditar('${a.id}', '${dataStr}', '${profissionalId}', '${clienteId}', '${servicoId}')" class="h-8 px-2.5 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 text-xs font-bold rounded-lg transition-all">
                         Alterar
                     </button>
                     <button onclick="window.excluirAgendamento('${a.id}')" class="h-8 px-2.5 bg-red-50 hover:bg-red-100 active:scale-95 text-red-600 text-xs font-bold rounded-lg border border-red-100 transition-all">
@@ -243,10 +277,13 @@ async function carregarSelectsNovo() {
 openNovoModalBtn.addEventListener('click', async () => {
     novoModalError.classList.add('hidden');
 
-    const dataHoraPreenchida = new Date(dataSelecionada);
     const agora = new Date();
+    dataHoraInput.min = formatarParaInputDateTime(agora);
 
-    if (dataSelecionada.toDateString() === agora.toDateString()) {
+    let dataHoraPreenchida = new Date(dataSelecionada);
+    if (dataHoraPreenchida < agora) {
+        dataHoraPreenchida = new Date(agora);
+    } else if (dataSelecionada.toDateString() === agora.toDateString()) {
         dataHoraPreenchida.setHours(agora.getHours(), agora.getMinutes());
     } else {
         dataHoraPreenchida.setHours(9, 0);
@@ -272,14 +309,23 @@ novoAgendamentoForm.addEventListener('submit', async (e) => {
     e.preventDefault();
     novoModalError.classList.add('hidden');
 
+    const dataEscolhida = new Date(dataHoraInput.value);
+    const agora = new Date();
+
+    if (dataEscolhida < agora) {
+        novoModalError.textContent = 'Não é possível realizar agendamentos em datas ou horários passados.';
+        novoModalError.classList.remove('hidden');
+        return;
+    }
+
     const submitBtn = novoAgendamentoForm.querySelector('button[type="submit"]');
-    setButtonLoading(submitBtn, true, 'Salvar');
+    setButtonLoading(submitBtn, true, 'Salvando...');
 
     const payload = {
         clienteId: clienteSelect.value,
         profissionalId: profissionalSelect.value,
         servicoId: servicoSelect.value,
-        dataHora: new Date(dataHoraInput.value).toISOString()
+        dataHora: dataEscolhida.toISOString()
     };
 
     try {
@@ -289,7 +335,10 @@ novoAgendamentoForm.addEventListener('submit', async (e) => {
             body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error();
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.message || errData.title || 'Erro ao criar agendamento');
+        }
 
         fecharNovoModal();
         novoAgendamentoForm.reset();
@@ -298,7 +347,7 @@ novoAgendamentoForm.addEventListener('submit', async (e) => {
         await carregarAgendamentosDoDia(dataSelecionada);
         await renderizarCalendario();
     } catch (err) {
-        novoModalError.textContent = 'Falha ao salvar agendamento.';
+        novoModalError.textContent = err.message || 'Falha ao salvar agendamento.';
         novoModalError.classList.remove('hidden');
     } finally {
         setButtonLoading(submitBtn, false);
@@ -306,12 +355,17 @@ novoAgendamentoForm.addEventListener('submit', async (e) => {
 });
 
 // Editar Agendamento
-window.abrirModalEditar = async (id, dataAtual, profissionalId) => {
+window.abrirModalEditar = async (id, dataAtual, profissionalId, clienteId, servicoId) => {
     editAgendamentoId.value = id;
+    if (editClienteId) editClienteId.value = clienteId || '';
+    if (editServicoId) editServicoId.value = servicoId || '';
+
     editModalError.classList.add('hidden');
 
     if (dataAtual) {
-        editDataHoraInput.value = formatarParaInputDateTime(new Date(dataAtual));
+        const d = new Date(dataAtual);
+        editDataHoraInput.min = formatarParaInputDateTime(new Date());
+        editDataHoraInput.value = formatarParaInputDateTime(d);
     }
 
     try {
@@ -341,13 +395,23 @@ editarForm.addEventListener('submit', async (e) => {
     editModalError.classList.add('hidden');
 
     const submitBtn = editarForm.querySelector('button[type="submit"]');
-    setButtonLoading(submitBtn, true, 'Salvar');
+    setButtonLoading(submitBtn, true, 'Salvando...');
 
     const id = editAgendamentoId.value;
+    const dataEscolhida = new Date(editDataHoraInput.value);
+
     const payload = {
-        dataHora: new Date(editDataHoraInput.value).toISOString(),
-        profissionalId: editProfissionalSelect.value
+        id: id,
+        profissionalId: editProfissionalSelect.value,
+        dataHora: dataEscolhida.toISOString()
     };
+
+    if (editClienteId && editClienteId.value) {
+        payload.clienteId = editClienteId.value;
+    }
+    if (editServicoId && editServicoId.value) {
+        payload.servicoId = editServicoId.value;
+    }
 
     try {
         const res = await apiFetch(`/Agendamentos/${id}`, {
@@ -356,21 +420,25 @@ editarForm.addEventListener('submit', async (e) => {
             body: JSON.stringify(payload)
         });
 
-        if (!res.ok) throw new Error();
+        if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            const mensagemErro = errData.message || errData.title || (typeof errData === 'string' ? errData : 'Erro ao atualizar agendamento.');
+            throw new Error(mensagemErro);
+        }
 
         fecharModalEditar();
         showToast('Agendamento alterado com sucesso!', 'sucesso');
         await carregarAgendamentosDoDia(dataSelecionada);
         await renderizarCalendario();
     } catch (err) {
-        editModalError.textContent = 'Erro ao atualizar agendamento.';
+        editModalError.textContent = err.message || 'Erro ao atualizar agendamento.';
         editModalError.classList.remove('hidden');
     } finally {
         setButtonLoading(submitBtn, false);
     }
 });
 
-// Excluir Agendamento com Modal Customizado
+// Excluir Agendamento
 window.excluirAgendamento = async (id) => {
     const confirmou = await showConfirmModal({
         titulo: 'Excluir Agendamento?',
@@ -393,7 +461,33 @@ window.excluirAgendamento = async (id) => {
     }
 };
 
+function atualizarNavAtiva() {
+    const pathAtual = window.location.pathname;
+
+    document.querySelectorAll('nav a').forEach(link => {
+        const href = link.getAttribute('href');
+        const span = link.querySelector('span');
+
+        if (pathAtual.includes(href)) {
+            link.classList.remove('text-gray-400');
+            link.classList.add('text-emerald-600');
+            if (span) {
+                span.classList.remove('font-medium');
+                span.classList.add('font-bold');
+            }
+        } else {
+            link.classList.remove('text-emerald-600');
+            link.classList.add('text-gray-400');
+            if (span) {
+                span.classList.remove('font-bold');
+                span.classList.add('font-medium');
+            }
+        }
+    });
+}
+
 // Inicialização
 initBackdropClose();
+atualizarNavAtiva();
 renderizarCalendario();
 carregarAgendamentosDoDia(dataSelecionada);
