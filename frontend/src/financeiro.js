@@ -17,7 +17,7 @@ const primeiroDia = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 dataInicioInput.value = primeiroDia.toISOString().split('T')[0];
 dataFimInput.value = hoje.toISOString().split('T')[0];
 
-const formatarMoeda = (valor) => 
+const formatarMoeda = (valor) =>
   new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(valor);
 
 // Carregar Dados
@@ -30,7 +30,7 @@ async function buscarRelatorio() {
     if (!res.ok) throw new Error();
 
     const data = await res.json();
-    
+
     // Atualizar Cards
     faturamentoBrutoEl.textContent = formatarMoeda(data.faturamentoBruto);
     totalComissoesEl.textContent = formatarMoeda(data.totalComissoes);
@@ -73,6 +73,32 @@ filtroForm.addEventListener('submit', (e) => {
   e.preventDefault();
   buscarRelatorio();
 });
+function atualizarNavAtiva() {
+  const pathAtual = window.location.pathname;
 
+  document.querySelectorAll('nav a').forEach(link => {
+    const href = link.getAttribute('href');
+    const span = link.querySelector('span');
+
+    if (pathAtual.includes(href)) {
+      link.classList.remove('text-gray-400');
+      link.classList.add('text-emerald-600');
+      if (span) {
+        span.classList.remove('font-medium');
+        span.classList.add('font-bold');
+      }
+    } else {
+      link.classList.remove('text-emerald-600');
+      link.classList.add('text-gray-400');
+      if (span) {
+        span.classList.remove('font-bold');
+        span.classList.add('font-medium');
+      }
+    }
+  });
+}
+
+// Executa ao carregar a página
+document.addEventListener('DOMContentLoaded', atualizarNavAtiva);
 // Inicializar na abertura
 buscarRelatorio();

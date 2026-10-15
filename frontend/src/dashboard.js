@@ -1,8 +1,8 @@
 import './style.css';
 import { apiFetch } from './api.js';
 
-// Variáveis Globais de Estado
-let agendamentosList = [];
+// Estado
+let agendamentosHojeList = [];
 let agendamentoParaConfirmarId = null;
 
 // Elementos da DOM
@@ -10,7 +10,7 @@ const dataAtualEl = document.getElementById('dataAtual');
 const logoutBtn = document.getElementById('logoutBtn');
 const listaAgendamentosEl = document.getElementById('listaAgendamentos');
 
-// Elementos do Modal de Criar Agendamento
+// Elementos do Modal de Novo Agendamento
 const modalAgendamento = document.getElementById('modalAgendamento');
 const openModalBtn = document.getElementById('openModalBtn');
 const closeModalBtn = document.getElementById('closeModalBtn');
@@ -18,27 +18,156 @@ const cancelModalBtn = document.getElementById('cancelModalBtn');
 const agendamentoForm = document.getElementById('agendamentoForm');
 const modalError = document.getElementById('modalError');
 
-// Campos do Formulário
 const clienteSelect = document.getElementById('clienteSelect');
 const servicoSelect = document.getElementById('servicoSelect');
 const profissionalSelect = document.getElementById('profissionalSelect');
 const dataHoraInput = document.getElementById('dataHoraInput');
 
-// Formatador de Data no Topo
-dataAtualEl.textContent = new Date().toLocaleDateString('pt-BR', {
-  weekday: 'long',
-  day: 'numeric',
-  month: 'long'
-});
+// Helper para formatar a data no input datetime-local
+function formatarParaInputDateTime(date) {
+  const ano = date.getFullYear();
+  const mes = String(date.getMonth() + 1).padStart(2, '0');
+  const dia = String(date.getDate()).padStart(2, '0');
+  const horas = String(date.getHours()).padStart(2, '0');
+  const minutos = String(date.getMinutes()).padStart(2, '0');
+  return `${ano}-${mes}-${dia}T${horas}:${minutos}`;
+}
 
-// Ação de Logout
-logoutBtn.addEventListener('click', () => {
-  localStorage.removeItem('token');
-  window.location.href = '/index.html';
-});
+// Data no topo
+if (dataAtualEl) {
+  dataAtualEl.textContent = new Date().toLocaleDateString('pt-BR', {
+    weekday: 'long',
+    day: 'numeric',
+    month: 'long'
+  });
+}
+
+// Logout
+if (logoutBtn) {
+  logoutBtn.addEventListener('click', () => {
+    localStorage.removeItem('token');
+    window.location.href = '/index.html';
+  });
+}
+
+// Destaque Dinâmico no Menu Inferior
+function atualizarNavAtiva() {
+  const pathAtual = window.location.pathname;
+  document.querySelectorAll('nav a').forEach(link => {
+    const href = link.getAttribute('href');
+    const span = link.querySelector('span');
+    if (pathAtual.includes(href) || (href === '/dashboard.html' && (pathAtual === '/' || pathAtual === ''))) {
+      link.classList.remove('text-gray-400');
+      link.classList.add('text-emerald-600');
+      if (span) {
+        span.classList.remove('font-medium');
+        span.classList.add('font-bold');
+      }
+    } else {
+      link.classList.remove('text-emerald-600');
+      link.classList.add('text-gray-400');
+      if (span) {
+        span.classList.remove('font-bold');
+        span.classList.add('font-medium');
+      }
+    }
+  });
+}
+
+// Carregar Dados dos Selects do Modal
+async function carregarSelectsModal() {
+  try {
+    const [resC, resS, resP] = await Promise.all([
+      apiFetch('/Clientes'),
+      apiFetch('/Servicos'),
+      apiFetch('/Profissionais')
+    ]);
+
+    if (resC.ok) {
+      const clientes = await resC.json();
+      clienteSelect.innerHTML = '<option value="">Selecione um cliente</option>' +
+        clientes.map(c => `<option value="${c.id}">${c.nomeCompleto || c.nome}</option>`).join('');
+    }
+    if (resS.ok) {
+      const servicos = await resS.json();
+      servicoSelect.innerHTML = '<option value="">Selecione um serviço</option>' +
+        servicos.map(s => `<option value="${s.id}">${s.nome}</option>`).join('');
+    }
+    if (resP.ok) {
+      const profs = await resP.json();
+      profissionalSelect.innerHTML = '<option value="">Selecione um profissional</option>' +
+        profs.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
+    }
+  } catch (err) {
+    console.error('Erro ao carregar opções do formulário:', err);
+  }
+}
+
+// Abrir Modal de Agendamento
+if (openModalBtn) {
+  openModalBtn.addEventListener('click', async () => {
+    modalError.classList.add('hidden');
+    dataHoraInput.value = formatarParaInputDateTime(new Date());
+
+    modalAgendamento.classList.remove('hidden');
+    modalAgendamento.classList.add('flex');
+
+    await carregarSelectsModal();
+  });
+}
+
+const fecharModal = () => {
+  modalAgendamento.classList.add('hidden');
+  modalAgendamento.classList.remove('flex');
+};
+
+if (closeModalBtn) closeModalBtn.addEventListener('click', fecharModal);
+if (cancelModalBtn) cancelModalBtn.addEventListener('click', fecharModal);
+
+// Salvar Novo Agendamento (POST)
+if (agendamentoForm) {
+  agendamentoForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    modalError.classList.add('hidden');
+
+    // Converte a data local para ISO UTC
+    const dataIsoUtc = new Date(dataHoraInput.value).toISOString();
+
+    const payload = {
+      clienteId: clienteSelect.value,
+      profissionalId: profissionalSelect.value,
+      servicoId: servicoSelect.value,
+      dataHora: dataIsoUtc
+    };
+
+    try {
+      const res = await apiFetch('/Agendamentos', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || 'Erro ao criar agendamento');
+      }
+
+      fecharModal();
+      agendamentoForm.reset();
+
+      // Recarrega a lista do dia
+      await carregarAgendamentosHoje();
+    } catch (err) {
+      modalError.textContent = err.message || 'Falha ao salvar agendamento.';
+      modalError.classList.remove('hidden');
+    }
+  });
+}
 
 // ==========================================
-// Modal de Confirmação (Criado via JS)
+// Modal Popup de Confirmação de Agendamento
 // ==========================================
 function injetarModalConfirmacao() {
   if (document.getElementById('modalConfirmacao')) return;
@@ -55,14 +184,13 @@ function injetarModalConfirmacao() {
         <p class="text-xs text-gray-500 mb-4">Confira os detalhes do pedido abaixo:</p>
 
         <div id="detalhesConfirmacao" class="bg-gray-50 p-3 rounded-xl mb-5 space-y-1.5 text-xs text-left border border-gray-100">
-          <!-- Preenchido via JS -->
         </div>
 
         <div class="flex gap-2">
-          <button id="btnCancelarConfirmacao" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 text-xs font-bold rounded-xl transition-all">
+          <button id="btnCancelarConfirmacao" type="button" class="flex-1 py-2.5 bg-gray-100 hover:bg-gray-200 active:scale-95 text-gray-700 text-xs font-bold rounded-xl transition-all">
             Voltar
           </button>
-          <button id="btnAprovarConfirmacao" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-emerald-100">
+          <button id="btnAprovarConfirmacao" type="button" class="flex-1 py-2.5 bg-emerald-600 hover:bg-emerald-700 active:scale-95 text-white text-xs font-bold rounded-xl transition-all shadow-md shadow-emerald-100">
             Confirmar
           </button>
         </div>
@@ -84,11 +212,10 @@ function fecharModalConfirmacao() {
   agendamentoParaConfirmarId = null;
 }
 
-// Global para ser chamada no clique do botão "Confirmar"
 window.confirmarAgendamento = (id) => {
   injetarModalConfirmacao();
 
-  const agendamento = agendamentosList.find(a => a.id === id);
+  const agendamento = agendamentosHojeList.find(a => a.id === id);
   if (!agendamento) return;
 
   agendamentoParaConfirmarId = id;
@@ -118,88 +245,28 @@ async function executarConfirmacao() {
   try {
     const res = await apiFetch(`/Agendamentos/${agendamentoParaConfirmarId}/confirmar`, {
       method: 'PATCH',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+      headers: { 'Content-Type': 'application/json' }
     });
 
-    if (!res.ok) {
-      const errText = await res.text();
-      console.error(`Erro ${res.status} da API:`, errText);
-      throw new Error(`Erro ${res.status}`);
-    }
+    if (!res.ok) throw new Error();
 
     fecharModalConfirmacao();
-    await carregarAgendamentosHoje(); // Recarrega a lista com status atualizado
+    await carregarAgendamentosHoje();
   } catch (err) {
-    console.error('Falha na requisição de confirmação:', err);
-    alert('Não foi possível confirmar o agendamento. Veja os detalhes no Console (F12).');
+    alert('Não foi possível confirmar o agendamento.');
   }
 }
-// ==========================================
-// Funções de Carregamento e Modal Novo Agendamento
-// ==========================================
-async function carregarClientes() {
-  try {
-    const res = await apiFetch('/Clientes');
-    if (!res.ok) return;
-    const clientes = await res.json();
-    clienteSelect.innerHTML = '<option value="">Selecione um cliente</option>' +
-      clientes.map(c => `<option value="${c.id}">${c.nomeCompleto || c.nome}</option>`).join('');
-  } catch (err) { console.error(err); }
-}
-
-async function carregarProfissionais() {
-  try {
-    const res = await apiFetch('/Profissionais');
-    if (!res.ok) return;
-    const profissionais = await res.json();
-    profissionalSelect.innerHTML = '<option value="">Selecione um profissional</option>' +
-      profissionais.map(p => `<option value="${p.id}">${p.nome}</option>`).join('');
-  } catch (err) { console.error(err); }
-}
-
-async function carregarServicos() {
-  try {
-    const res = await apiFetch('/Servicos');
-    if (!res.ok) return;
-    const servicos = await res.json();
-    servicoSelect.innerHTML = '<option value="">Selecione um serviço</option>' +
-      servicos.map(s => `<option value="${s.id}">${s.nome}</option>`).join('');
-  } catch (err) { console.error(err); }
-}
-
-const abrirModal = async () => {
-  modalError.classList.add('hidden');
-  modalAgendamento.classList.remove('hidden');
-  modalAgendamento.classList.add('flex');
-
-  await Promise.all([
-    carregarClientes(),
-    carregarProfissionais(),
-    carregarServicos()
-  ]);
-};
-
-const fecharModal = () => {
-  modalAgendamento.classList.add('hidden');
-  modalAgendamento.classList.remove('flex');
-};
-
-openModalBtn.addEventListener('click', abrirModal);
-closeModalBtn.addEventListener('click', fecharModal);
-cancelModalBtn.addEventListener('click', fecharModal);
 
 // ==========================================
-// Carregar Agendamentos do Dia
+// Carregar Agendamentos de Hoje
 // ==========================================
 async function carregarAgendamentosHoje() {
   try {
     const res = await apiFetch('/Agendamentos/hoje');
     if (!res.ok) throw new Error();
 
-    agendamentosList = await res.json();
-    renderAgendamentos(agendamentosList);
+    agendamentosHojeList = await res.json();
+    renderAgendamentos(agendamentosHojeList);
   } catch (err) {
     listaAgendamentosEl.innerHTML = `
       <div class="p-4 bg-red-50 text-red-600 rounded-xl border border-red-100 text-center text-xs font-medium">
@@ -208,7 +275,6 @@ async function carregarAgendamentosHoje() {
   }
 }
 
-// Renderizar Lista na Tela
 function renderAgendamentos(agendamentos) {
   if (!agendamentos || agendamentos.length === 0) {
     listaAgendamentosEl.innerHTML = `
@@ -255,4 +321,5 @@ function renderAgendamentos(agendamentos) {
 }
 
 // Inicialização
+atualizarNavAtiva();
 carregarAgendamentosHoje();

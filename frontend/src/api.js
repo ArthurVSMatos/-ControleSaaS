@@ -19,6 +19,7 @@ export async function apiFetch(endpoint, options = {}) {
     window.location.href = '/login.html';
     return;
   }
+  
 
   return response;
 }

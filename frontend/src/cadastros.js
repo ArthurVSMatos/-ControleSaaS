@@ -252,5 +252,33 @@ cadastroForm.addEventListener('submit', async (e) => {
     }
 });
 
+function atualizarNavAtiva() {
+    const pathAtual = window.location.pathname;
+
+    document.querySelectorAll('nav a').forEach(link => {
+        const href = link.getAttribute('href');
+        const span = link.querySelector('span');
+
+        if (pathAtual.includes(href)) {
+            link.classList.remove('text-gray-400');
+            link.classList.add('text-emerald-600');
+            if (span) {
+                span.classList.remove('font-medium');
+                span.classList.add('font-bold');
+            }
+        } else {
+            link.classList.remove('text-emerald-600');
+            link.classList.add('text-gray-400');
+            if (span) {
+                span.classList.remove('font-bold');
+                span.classList.add('font-medium');
+            }
+        }
+    });
+}
+
+// Executa ao carregar a página
+document.addEventListener('DOMContentLoaded', atualizarNavAtiva);
+
 // Init
 carregarDados();
