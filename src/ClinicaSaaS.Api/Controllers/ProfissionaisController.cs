@@ -31,7 +31,15 @@ public class ProfissionaisController : ControllerBase
             query = query.Where(p => p.IsAtivo);
 
         var profissionais = await query
-            .Select(p => new ProfissionalDto(p.Id, p.Nome, p.Telefone, p.RecebeComissao, p.PorcentagemComissao, p.IsAtivo))
+            .Select(p => new ProfissionalDto(
+                p.Id,
+                p.Nome,
+                p.Telefone,
+                p.Especialidade,
+                p.PorcentagemComissao,
+                p.RecebeComissao,
+                p.IsAtivo
+            ))
             .ToListAsync(cancellationToken);
 
         return Ok(profissionais);
@@ -45,7 +53,15 @@ public class ProfissionaisController : ControllerBase
         if (p == null)
             return NotFound(new { message = "Profissional não encontrado." });
 
-        return Ok(new ProfissionalDto(p.Id, p.Nome, p.Telefone, p.RecebeComissao, p.PorcentagemComissao, p.IsAtivo));
+        return Ok(new ProfissionalDto(
+            p.Id,
+            p.Nome,
+            p.Telefone,
+            p.Especialidade,
+            p.PorcentagemComissao,
+            p.RecebeComissao,
+            p.IsAtivo
+        ));
     }
 
     [HttpPost]
@@ -55,21 +71,29 @@ public class ProfissionaisController : ControllerBase
         if (!validationResult.IsValid)
             return BadRequest(validationResult.Errors.Select(e => e.ErrorMessage));
 
+        // No Método Create:
         var profissional = new Profissional
         {
             Nome = dto.Nome,
             Telefone = dto.Telefone,
-            RecebeComissao = dto.RecebeComissao,
-            PorcentagemComissao = dto.RecebeComissao ? dto.PorcentagemComissao : 0,
+            Especialidade = dto.Especialidade ?? string.Empty,
+            PorcentagemComissao = (int)dto.PorcentagemComissao, // <-- Cast (int) adicionado
+            RecebeComissao = dto.PorcentagemComissao > 0,
             IsAtivo = true
         };
+
 
         _context.Profissionais.Add(profissional);
         await _context.SaveChangesAsync(cancellationToken);
 
         var result = new ProfissionalDto(
-            profissional.Id, profissional.Nome, profissional.Telefone,
-            profissional.RecebeComissao, profissional.PorcentagemComissao, profissional.IsAtivo
+            profissional.Id,
+            profissional.Nome,
+            profissional.Telefone,
+            profissional.Especialidade,
+            profissional.PorcentagemComissao,
+            profissional.RecebeComissao,
+            profissional.IsAtivo
         );
 
         return CreatedAtAction(nameof(GetById), new { id = profissional.Id }, result);
@@ -85,8 +109,9 @@ public class ProfissionaisController : ControllerBase
 
         profissional.Nome = dto.Nome;
         profissional.Telefone = dto.Telefone;
-        profissional.RecebeComissao = dto.RecebeComissao;
-        profissional.PorcentagemComissao = dto.RecebeComissao ? dto.PorcentagemComissao : 0;
+        profissional.Especialidade = dto.Especialidade ?? string.Empty;
+        profissional.PorcentagemComissao = (int)dto.PorcentagemComissao; // <-- Cast (int) adicionado
+        profissional.RecebeComissao = dto.PorcentagemComissao > 0;
 
         await _context.SaveChangesAsync(cancellationToken);
         return NoContent();
@@ -100,7 +125,7 @@ public class ProfissionaisController : ControllerBase
         if (profissional == null)
             return NotFound(new { message = "Profissional não encontrado." });
 
-        // Soft Delete conforme especificado no SRS
+        // Soft Delete
         profissional.IsAtivo = false;
         await _context.SaveChangesAsync(cancellationToken);
 

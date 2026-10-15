@@ -26,7 +26,7 @@ public class ClientesController : ControllerBase
     public async Task<ActionResult<IEnumerable<ClienteDto>>> GetAll(CancellationToken cancellationToken)
     {
         var clientes = await _context.Clientes
-            .Select(c => new ClienteDto(c.Id, c.NomeCompleto, c.Telefone))
+            .Select(c => new ClienteDto(c.Id, c.NomeCompleto, c.Telefone, c.Email))
             .ToListAsync(cancellationToken);
 
         return Ok(clientes);
@@ -40,7 +40,7 @@ public class ClientesController : ControllerBase
         if (cliente == null)
             return NotFound(new { message = "Cliente não encontrado." });
 
-        return Ok(new ClienteDto(cliente.Id, cliente.NomeCompleto, cliente.Telefone));
+        return Ok(new ClienteDto(cliente.Id, cliente.NomeCompleto, cliente.Telefone, cliente.Email));
     }
 
     [HttpPost]
@@ -53,13 +53,14 @@ public class ClientesController : ControllerBase
         var cliente = new Cliente
         {
             NomeCompleto = dto.NomeCompleto,
-            Telefone = dto.Telefone
+            Telefone = dto.Telefone,
+            Email = dto.Email
         };
 
         _context.Clientes.Add(cliente);
         await _context.SaveChangesAsync(cancellationToken);
 
-        var result = new ClienteDto(cliente.Id, cliente.NomeCompleto, cliente.Telefone);
+        var result = new ClienteDto(cliente.Id, cliente.NomeCompleto, cliente.Telefone, cliente.Email);
         return CreatedAtAction(nameof(GetById), new { id = cliente.Id }, result);
     }
 
@@ -73,6 +74,7 @@ public class ClientesController : ControllerBase
 
         cliente.NomeCompleto = dto.NomeCompleto;
         cliente.Telefone = dto.Telefone;
+        cliente.Email = dto.Email;
 
         await _context.SaveChangesAsync(cancellationToken);
         return NoContent();

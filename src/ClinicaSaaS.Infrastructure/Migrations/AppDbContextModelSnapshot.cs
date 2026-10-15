@@ -95,6 +95,11 @@ namespace ClinicaSaaS.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("criado_em");
 
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("email");
+
                     b.Property<string>("NomeCompleto")
                         .IsRequired()
                         .HasMaxLength(150)
@@ -163,6 +168,11 @@ namespace ClinicaSaaS.Infrastructure.Migrations
                     b.Property<DateTimeOffset>("CriadoEm")
                         .HasColumnType("timestamp with time zone")
                         .HasColumnName("criado_em");
+
+                    b.Property<string>("Especialidade")
+                        .IsRequired()
+                        .HasColumnType("text")
+                        .HasColumnName("especialidade");
 
                     b.Property<bool>("IsAtivo")
                         .ValueGeneratedOnAdd()

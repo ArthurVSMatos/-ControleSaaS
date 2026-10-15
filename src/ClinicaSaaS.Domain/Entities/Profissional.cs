@@ -9,6 +9,7 @@ public class Profissional : BaseEntity, ITenantEntity
     public string Nome { get; set; } = string.Empty;
     public string Telefone { get; set; } = string.Empty;
     public bool RecebeComissao { get; set; } = false;
+    public string Especialidade { get; set; } = string.Empty;
     public int PorcentagemComissao { get; set; } = 0;
     public bool IsAtivo { get; set; } = true;
 

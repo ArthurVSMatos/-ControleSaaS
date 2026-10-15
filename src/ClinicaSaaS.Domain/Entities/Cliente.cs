@@ -8,6 +8,7 @@ public class Cliente : BaseEntity, ITenantEntity
     public Guid ClinicaId { get; set; }
     public string NomeCompleto { get; set; } = string.Empty;
     public string Telefone { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
 
     public Clinica Clinica { get; set; } = null!;
     public ICollection<Agendamento> Agendamentos { get; set; } = new List<Agendamento>();
